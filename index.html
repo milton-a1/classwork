@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- Jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- Ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>   
+    <!-- JavaScript -->
+    <script type="text/JavaScript" src="assets\javascript\javascript.js"></script> 
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets\css\style.css">
+    <!-- Canvas -->
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+</head>
+
+<body>
+    
+    <!--Navbar-->
+    <nav class="navbar navbar-dark default-color" id="barranav">
+        <a class="navbar-brand"  id="imagenLogo"><img src="assets\img\pokemon_logo.png" alt="pokemon logo" class="logo"></a>
+        <div class="form-inline my-2 my-lg-0 ml-auto">
+                <input class="form-control" type="number" placeholder="Ingresa un numero" aria-label="Search" id="buscador"  min="1" max="807">
+            <button class="btn btn-outline-white btn-md my-2 my-sm-0 ml-3" type="button" id="boton" style="background: lightgray;">Enviar</button>
+        </div>
+      </nav>
+      <p id="local"></p>
+
+
+    <div class="container">
+        <div class="row">
+          <div class="col-sm my-auto">
+            <div id="txt">
+
+                <div class="card" style="width: 18rem;">
+                    <img src="assets\img\pokebola.png"  class="card-img-top" alt="..." id="imagen">
+                    <div class="card-body">
+                      <h5 class="card-title" id="text">Pokemón</h5>
+                      <p class="card-text"></p>
+                    </div>
+                  </div>
+            </div>
+          </div>
+
+          <div class="col-sm my-auto">
+            <div id="chartContainer" style="height: 300px; width: 100%;">
+            
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+<!-- footer -->
+<footer class="page-footer font-small blue">
+
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3" style="margin-top: 45px;background-color: darkred; color:white; text-decoration: none; text-decoration-color: white;">Para saber más de pokemones ingresa a <a id="link" href="https://www.pokemon.com/"> www.pokemon.com</a>
+    </div>
+    <!-- Copyright -->
+  
+  </footer>
+
+<script>
+var speed;
+
+function validar(){
+        $('.alert').remove();
+        var flag = false;
+        var entrada = document.getElementById('buscador').value;
+        const patron = /0*^\d+$/gm;
+
+        if(!patron.test(entrada)){
+            alert("No ingrese caracteres extraños");
+            
+        }else{
+            var parseado = parseInt(entrada);
+                   
+            if(parseado > 807 || parseado == 0){
+                $('#local').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Lo sentimos! </strong>Las busquedas van desde el 1 al 807.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>`);
+                }
+
+
+
+            else flag = true;
+        }
+        return flag;
+}
+
+$(document).ready(function(){
+    $("#buscador").keyup(function(){
+        var text = $(this).val(),
+            key = event.keyCode;
+            if((48<=key && key<=57) || (96<=key && key<=105)){
+                validar();
+            } 
+    });
+});
+
+var input = document.getElementById("buscador");
+input.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+   event.preventDefault();
+   document.getElementById("boton").click();
+  }
+});
+
+var input = document.getElementById("buscador");
+input.addEventListener("keyup", function(event) {
+  if (event.keyCode === 69) {
+   event.preventDefault();
+   input.value="";
+  }
+});
+
+
+$('#boton').click(function p(){
+
+    var link = "https://pokeapi.co/api/v2/pokemon/";
+   
+    if(validar()){
+        
+        var numero = parseInt(document.getElementById('buscador').value);
+        var busqueda = link + numero;
+
+        $.ajax({
+        type:"GET",
+        url:busqueda,
+        success: function(data) {
+            $('.card-title').text(data.name.toUpperCase());
+            console.log(data)
+            console.log(data.abilities)
+            var nombre;
+            for(let i=0; i<data.stats.length;i++){
+                console.log(data.stats[i].stat.name + ": " +data.stats[i].base_stat);
+            }
+           
+            var ruta = data.sprites.front_default;
+            console.log(ruta);
+            document.getElementById("imagen").setAttribute("src",ruta);
+
+            speed = parseInt(data.stats[0].base_stat);
+            sd = parseInt(data.stats[1].base_stat);
+            sa = parseInt(data.stats[2].base_stat);
+            d = parseInt(data.stats[3].base_stat);
+            a = parseInt(data.stats[4].base_stat);
+            hp = parseInt(data.stats[5].base_stat);
+            nombre = data.name
+            grafico(speed,sd,sa,d,a,hp,nombre);
+
+            var abil = data.abilities;
+            var type = data.types;
+
+
+            $('.bb').remove();
+            $('#aa').remove();
+            $('#zz').remove();
+            $('.cc').remove();
+
+            if($('#zz').length <1){
+
+                $('.card-text').append(`<p id="zz" style="margin-bottom: 0em; margin-top: 1em;"><strong>Tipo(s): </strong></p>`); 
+                for(let i=0; i<type.length  ;i++){
+                var n = "";
+                console.log("tipo: "+data.types[i].type.name);
+
+                var n = data.types[i].type.name;
+                $('.card-text').append(`<p class="cc" style="margin-bottom: 0em;"> ${n} </p>`);   
+                }
+                }
+            if($('#aa').length <1){
+
+                $('.card-text').append(`<p id="aa" style="margin-bottom: 0em; margin-top: 1em;"><strong>Habilidades: </strong></p>`); 
+                for(let i=0; i<abil.length  ;i++){
+                var m = "";
+                console.log(data.abilities[i].ability.name);
+                
+                var m = data.abilities[i].ability.name;
+                $('.card-text').append(`<p class="bb" style="margin-bottom: 0em;"> ${m} </p>`); 
+ 
+                }
+            }
+      
+        },
+        dataType: 'json',
+    });
+    
+    }
+});
+
+//grafico
+function grafico(speed,sd,sa,d,a,hp,nombre) {
+var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    theme: "light2", // "light1", "light2", "dark1", "dark2"
+    title:{
+        text: "Estadísticas de " + nombre.toUpperCase()
+    },
+    axisY: {
+        title: "Magnitud de habilidad"
+    },
+    data: [{        
+        type: "bar",  
+        showInLegend: true, 
+        legendMarkerColor: "grey",
+        
+        dataPoints: [      
+
+            { y: hp,  label: "Hp" },
+            { y: a,  label: "Attack" },
+            { y: d,  label: "Defense" },
+            { y: sa, label: "Special Attack" },
+            { y: sd,  label: "Special Defense" },
+            { y: speed,  label: "Speed" }
+        ]
+    }]
+});
+chart.render();
+}
+    
+//validacion en tiempo real
+
+
+
+
+
+
+</script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+#barranav {
+    background-color: darkred;
+    margin-bottom: 3em;
+}
+
+.logo{
+    width: 12em;
+}
+
+.navbar{
+    
+    padding: 0em auto;
+}
+
+#link{
+    color:#ffffff
+}
+
+body{
+    background-image: url('../img/Wiki-background.png');
+    background-size: cover;
+    background-repeat:no-repeat;
+}
+
+#boton{
+    background: #2a74ba !important;
+    color: #ffcb05;
+    font-weight: bolder;
+}
+
+.canvasjs-chart-canvas{
+    border-radius: 4px;
+}
+
+@media only screen and (max-width: 600px) {
+    .ml-auto{
+        margin-left: 0em !important;
+        padding: 0em 1.5em 0em 1.5em;
+        width: -webkit-fill-available;
+        }
+        
+    #imagenLogo{
+        display: block !important;
+        margin: auto !important;
+        }    
+    
+    .ml-3{
+        margin: 0.5em auto !important;
+    }    
+  
+    }
